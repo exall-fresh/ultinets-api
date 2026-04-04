@@ -41,17 +41,134 @@ CORS_ORIGIN=http://localhost:3000
 UPLOAD_DIR=public/uploads
 ```
 
-### 3. Setup Database
+### 3. Database Setup
+
+#### Prerequisites
+
+You need **MySQL 8.0+** or **MariaDB 10.5+** installed on your system.
+
+**Windows Options:**
+- [XAMPP](https://www.apachefriends.org/) (Recommended - includes MySQL + phpMyAdmin)
+- [WAMP](https://www.wampserver.com/)
+- MySQL Community Server
+
+**macOS:**
+```bash
+brew install mysql
+brew services start mysql
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt update
+sudo apt install mysql-server
+sudo systemctl start mysql
+```
+
+#### Step 3.1: Create the Database
+
+**Option A: Using phpMyAdmin (XAMPP/WAMP)**
+1. Start Apache and MySQL from the XAMPP Control Panel
+2. Open browser: `http://localhost/phpmyadmin`
+3. Click "New" to create a database
+4. Enter database name: `ultinets_cms`
+5. Select collation: `utf8mb4_unicode_ci`
+6. Click "Create"
+
+**Option B: Using MySQL Command Line**
+```bash
+# Open MySQL terminal (Windows: use XAMPP Shell or MySQL Command Line Client)
+mysql -u root -p
+
+# Create database with UTF-8 support
+CREATE DATABASE ultinets_cms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+# Create a dedicated user (recommended for production)
+CREATE USER 'ultinets_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+GRANT ALL PRIVILEGES ON ultinets_cms.* TO 'ultinets_user'@'localhost';
+FLUSH PRIVILEGES;
+
+EXIT;
+```
+
+**Option C: Using MySQL Workbench**
+1. Open MySQL Workbench
+2. Connect to your local MySQL server
+3. Click "Create a new schema" (database icon)
+4. Enter name: `ultinets_cms`
+5. Charset: `utf8mb4`
+6. Collation: `utf8mb4_unicode_ci`
+7. Click "Apply"
+
+#### Step 3.2: Configure Database Connection
+
+Edit the `.env` file with your database credentials:
+
+```env
+# For XAMPP (default root, no password)
+DATABASE_URL="mysql://root:@localhost:3306/ultinets_cms"
+
+# For custom user
+DATABASE_URL="mysql://ultinets_user:your_password@localhost:3306/ultinets_cms"
+
+# For production with SSL
+DATABASE_URL="mysql://user:password@host:3306/ultinets_cms?sslaccept=strict"
+```
+
+**Connection string format:**
+```
+mysql://USER:PASSWORD@HOST:PORT/DATABASE?options
+```
+
+#### Step 3.3: Run Prisma Setup
 
 ```bash
-# Generate Prisma client
+# Generate Prisma client (creates TypeScript types from schema)
 npx prisma generate
 
-# Run migrations (creates tables)
+# Run migrations (creates database tables)
 npx prisma migrate dev --name init
+```
 
-# Optional: Seed with sample data
+**What this does:**
+- Creates all tables (users, pages, services, team, partners, etc.)
+- Sets up foreign key relationships
+- Creates indexes for performance
+
+**Troubleshooting:**
+- If you get `P1001: Can't reach database server` → MySQL is not running
+- If you get `P3005: Database already exists` → Database already created, skip to migrations
+- If you get authentication errors → Check username/password in DATABASE_URL
+
+#### Step 3.4: Seed Database (Optional)
+
+```bash
+# Populate database with sample data
 npm run db:seed
+```
+
+**This creates:**
+- Admin user: `admin@ultinets.com` / `admin123`
+- Editor user: `editor@ultinets.com` / `editor123`
+- Sample pages (Home, About)
+- Sample services (Web Development, Cloud Solutions)
+- Sample team members
+- Sample partners
+- Default site settings
+
+#### Step 3.5: Verify Database Setup
+
+```bash
+# View database in Prisma Studio (GUI)
+npx prisma studio
+```
+
+Opens at `http://localhost:5555` - you can browse and edit data.
+
+**Or test via API:**
+```bash
+# Should return empty array [] initially
+curl http://localhost:4000/api/pages
 ```
 
 ### 4. Start the Server
