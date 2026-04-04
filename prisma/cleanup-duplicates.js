@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function cleanupDuplicates() {
-  console.log('🧹 Cleaning up duplicate about data...\n');
+  console.log('🧹 Cleaning up duplicate data...\n');
 
   // Delete duplicate pillars (keep the first one of each title per section)
   const pillars = await prisma.aboutPillar.findMany({
@@ -55,6 +55,32 @@ async function cleanupDuplicates() {
     console.log(`✅ Deleted ${statsToDelete.length} duplicate stats`);
   } else {
     console.log('✅ No duplicate stats found');
+  }
+
+  // Delete duplicate partners (keep the first one of each name)
+  const partners = await prisma.partner.findMany({
+    orderBy: { id: 'asc' },
+  });
+
+  const seenPartners = new Set();
+  const partnersToDelete = [];
+
+  for (const partner of partners) {
+    const key = partner.name.toLowerCase();
+    if (seenPartners.has(key)) {
+      partnersToDelete.push(partner.id);
+    } else {
+      seenPartners.add(key);
+    }
+  }
+
+  if (partnersToDelete.length > 0) {
+    await prisma.partner.deleteMany({
+      where: { id: { in: partnersToDelete } },
+    });
+    console.log(`✅ Deleted ${partnersToDelete.length} duplicate partners`);
+  } else {
+    console.log('✅ No duplicate partners found');
   }
 
   console.log('\n✨ Cleanup completed!');
