@@ -16,6 +16,17 @@ router.get("/", handleAsync(async (req, res) => {
 
 router.post("/", handleAsync(async (req: AuthenticatedRequest, res) => {
   const data = req.body;
+
+  // Handle socialLinks - could be string or object
+  let socialLinks = null;
+  if (data.socialLinks) {
+    if (typeof data.socialLinks === "string") {
+      socialLinks = JSON.parse(data.socialLinks);
+    } else {
+      socialLinks = data.socialLinks;
+    }
+  }
+
   const member = await prisma.teamMember.create({
     data: {
       firstName: data.firstName,
@@ -25,7 +36,7 @@ router.post("/", handleAsync(async (req: AuthenticatedRequest, res) => {
       phone: data.phone,
       bio: data.bio,
       imageUrl: data.imageUrl || "",
-      socialLinks: data.socialLinks ? JSON.parse(data.socialLinks) : null,
+      socialLinks,
       published: Boolean(data.published),
       order: Number(data.order || 0),
       createdById: req.user!.userId,
@@ -38,6 +49,17 @@ router.post("/", handleAsync(async (req: AuthenticatedRequest, res) => {
 router.put("/:id", handleAsync(async (req: AuthenticatedRequest, res) => {
   const id = Number(req.params.id);
   const data = req.body;
+
+  // Handle socialLinks - could be string or object
+  let socialLinks = null;
+  if (data.socialLinks) {
+    if (typeof data.socialLinks === "string") {
+      socialLinks = JSON.parse(data.socialLinks);
+    } else {
+      socialLinks = data.socialLinks;
+    }
+  }
+
   const updated = await prisma.teamMember.update({
     where: { id },
     data: {
@@ -48,7 +70,7 @@ router.put("/:id", handleAsync(async (req: AuthenticatedRequest, res) => {
       phone: data.phone,
       bio: data.bio,
       imageUrl: data.imageUrl,
-      socialLinks: data.socialLinks ? JSON.parse(data.socialLinks) : null,
+      socialLinks,
       published: Boolean(data.published),
       order: Number(data.order || 0),
       updatedById: req.user!.userId,
@@ -61,6 +83,18 @@ router.delete("/:id", requireRole(["admin"]), handleAsync(async (req, res) => {
   const id = Number(req.params.id);
   await prisma.teamMember.delete({ where: { id } });
   res.json({ message: "Deleted" });
+}));
+
+router.patch("/:id/publish", handleAsync(async (req: AuthenticatedRequest, res) => {
+  const id = Number(req.params.id);
+  const member = await prisma.teamMember.update({
+    where: { id },
+    data: {
+      published: Boolean(req.body.published),
+      updatedById: req.user!.userId,
+    },
+  });
+  res.json(member);
 }));
 
 router.post("/:id/upload-photo", upload.single("photo"), handleAsync(async (req: any, res) => {

@@ -12,7 +12,7 @@ export type JwtUserPayload = {
 };
 
 export function signAccessToken(payload: JwtUserPayload) {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "15m" });
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
 }
 
 export function signRefreshToken(payload: JwtUserPayload) {

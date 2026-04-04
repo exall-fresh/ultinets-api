@@ -57,6 +57,18 @@ router.delete("/:id", requireRole(["admin"]), handleAsync(async (req, res) => {
   res.json({ message: "Deleted" });
 }));
 
+router.patch("/:id/publish", handleAsync(async (req: AuthenticatedRequest, res) => {
+  const id = Number(req.params.id);
+  const partner = await prisma.partner.update({
+    where: { id },
+    data: {
+      published: Boolean(req.body.published),
+      updatedById: req.user!.userId,
+    },
+  });
+  res.json(partner);
+}));
+
 router.post("/:id/upload-logo", upload.single("logo"), handleAsync(async (req: any, res) => {
   const id = Number(req.params.id);
   if (!req.file) return res.status(400).json({ message: "Logo required" });

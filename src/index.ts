@@ -17,6 +17,8 @@ import mediaPublicRoutes from "./routes/media.public";
 import mediaAdminRoutes from "./routes/media.admin";
 import settingsPublicRoutes from "./routes/settings.public";
 import settingsAdminRoutes from "./routes/settings.admin";
+import aboutPublicRoutes from "./routes/about.public";
+import aboutAdminRoutes from "./routes/about.admin";
 import logsAdminRoutes from "./routes/logs.admin";
 import prisma from "./prisma";
 
@@ -49,6 +51,8 @@ app.use("/api/admin/contacts", contactsAdminRoutes);
 app.use("/api/admin/media", mediaAdminRoutes);
 app.use("/api/admin/settings", settingsAdminRoutes);
 app.use("/api/settings", settingsPublicRoutes);
+app.use("/api/about", aboutPublicRoutes);
+app.use("/api/admin/about", aboutAdminRoutes);
 app.use("/api/admin/logs", logsAdminRoutes);
 
 io.on("connection", (socket) => {

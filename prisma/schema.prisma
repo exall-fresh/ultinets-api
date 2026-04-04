@@ -21,6 +21,8 @@ model User {
   teamUpdated    TeamMember[] @relation("TeamUpdatedBy")
   partnersCreated Partner[] @relation("PartnerCreatedBy")
   partnersUpdated Partner[] @relation("PartnerUpdatedBy")
+  aboutCreated   AboutSection[] @relation("AboutCreatedBy")
+  aboutUpdated   AboutSection[] @relation("AboutUpdatedBy")
   mediaUploads   Media[]
   logs           ActivityLog[]
   settings       Setting[]
@@ -47,6 +49,7 @@ model Service {
   fullDescription String?
   icon           String?
   imageUrl       String?
+  category       String?      // New field for service categories
   metaTitle      String?
   metaDescription String?
   published      Boolean      @default(false)
@@ -173,4 +176,45 @@ enum SettingType {
   text
   number
   boolean
+}
+
+model AboutSection {
+  id          Int      @id @default(autoincrement())
+  section     String   @unique // mission, approach, impact
+  title       String
+  content     String   @db.Text
+  published   Boolean  @default(true)
+  order       Int      @default(0)
+  createdById Int
+  updatedById Int
+  createdBy   User     @relation("AboutCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("AboutUpdatedBy", fields: [updatedById], references: [id])
+  pillars     AboutPillar[]
+  stats       AboutStat[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutPillar {
+  id          Int      @id @default(autoincrement())
+  sectionId   Int
+  title       String
+  description String   @db.Text
+  icon        String?
+  order       Int      @default(0)
+  section     AboutSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AboutStat {
+  id          Int      @id @default(autoincrement())
+  sectionId   Int
+  label       String
+  value       String
+  icon        String?
+  order       Int      @default(0)
+  section     AboutSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

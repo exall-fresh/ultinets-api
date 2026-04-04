@@ -31,7 +31,17 @@ router.post(
     const accessToken = signAccessToken({ userId: user.id, role: user.role });
     const refreshToken = signRefreshToken({ userId: user.id, role: user.role });
 
-    return res.status(201).json({ user: { id: user.id, email: user.email, role: user.role }, accessToken, refreshToken });
+    return res.status(201).json({ 
+      user: { 
+        id: user.id, 
+        email: user.email, 
+        firstName: user.firstName, 
+        lastName: user.lastName, 
+        role: user.role 
+      }, 
+      token: accessToken, 
+      refreshToken 
+    });
   })
 );
 
@@ -51,7 +61,17 @@ router.post(
     const accessToken = signAccessToken({ userId: user.id, role: user.role });
     const refreshToken = signRefreshToken({ userId: user.id, role: user.role });
 
-    return res.json({ user: { id: user.id, email: user.email, role: user.role }, accessToken, refreshToken });
+    return res.json({ 
+      user: { 
+        id: user.id, 
+        email: user.email, 
+        firstName: user.firstName, 
+        lastName: user.lastName, 
+        role: user.role 
+      }, 
+      token: accessToken, 
+      refreshToken 
+    });
   })
 );
 
