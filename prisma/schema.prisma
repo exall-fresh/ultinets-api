@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  password       String
+  firstName      String
+  lastName       String
+  role           Role      @default(viewer)
+  status         Status    @default(active)
+  pagesCreated   Page[]    @relation("PageCreatedBy")
+  pagesUpdated   Page[]    @relation("PageUpdatedBy")
+  servicesCreated Service[] @relation("ServiceCreatedBy")
+  servicesUpdated Service[] @relation("ServiceUpdatedBy")
+  teamCreated    TeamMember[] @relation("TeamCreatedBy")
+  teamUpdated    TeamMember[] @relation("TeamUpdatedBy")
+  partnersCreated Partner[] @relation("PartnerCreatedBy")
+  partnersUpdated Partner[] @relation("PartnerUpdatedBy")
+  mediaUploads   Media[]
+  logs           ActivityLog[]
+  settings       Setting[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+enum Role {
+  admin
+  editor
+  viewer
+}
+
+enum Status {
+  active
+  inactive
+}
+
+model Page {
+  id             Int      @id @default(autoincrement())
+  slug           String   @unique
+  title          String
+  description    String?
+  content        String?
+  metaTitle      String?
+  metaDescription String?
+  published      Boolean  @default(false)
+  publishedAt    DateTime?
+  createdById    Int
+  updatedById    Int
+  createdBy      User     @relation("PageCreatedBy", fields: [createdById], references: [id])
+  updatedBy      User     @relation("PageUpdatedBy", fields: [updatedById], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Service {
+  id             Int          @id @default(autoincrement())
+  slug           String       @unique
+  serviceName    String
+  description    String?
+  fullDescription String?
+  icon           String?
+  imageUrl       String?
+  metaTitle      String?
+  metaDescription String?
+  published      Boolean      @default(false)
+  publishedAt    DateTime?
+  order          Int          @default(0)
+  createdById    Int
+  updatedById    Int
+  createdBy      User         @relation("ServiceCreatedBy", fields: [createdById], references: [id])
+  updatedBy      User         @relation("ServiceUpdatedBy", fields: [updatedById], references: [id])
+  details        ServiceDetail[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model ServiceDetail {
+  id          Int      @id @default(autoincrement())
+  serviceId   Int
+  keyFeature  String
+  description String?
+  order       Int      @default(0)
+  service     Service  @relation(fields: [serviceId], references: [id])
+}
+
+model TeamMember {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  position    String
+  email       String   @unique
+  phone       String?
+  bio         String?
+  imageUrl    String?
+  socialLinks Json?
+  published   Boolean  @default(false)
+  order       Int      @default(0)
+  createdById Int
+  updatedById Int
+  createdBy   User     @relation("TeamCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("TeamUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Partner {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  logo        String?
+  website     String?
+  category    String?
+  published   Boolean  @default(false)
+  order       Int      @default(0)
+  createdById Int
+  updatedById Int
+  createdBy   User     @relation("PartnerCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("PartnerUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ContactSubmission {
+  id          Int      @id @default(autoincrement())
+  name        String
+  email       String
+  phone       String?
+  subject     String?
+  message     String
+  service     String?
+  status      ContactStatus @default(new)
+  captchaToken String?
+  submittedAt DateTime @default(now())
+  respondedAt DateTime?
+}
+
+enum ContactStatus {
+  new
+  read
+  responded
+  spam
+}
+
+model Media {
+  id         Int      @id @default(autoincrement())
+  filename   String
+  url        String
+  fileSize   Int
+  mimeType   String
+  altText    String?
+  uploadedById Int
+  uploadedBy User     @relation(fields:[uploadedById], references:[id])
+  uploadedAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  action     LogAction
+  entityType String
+  entityId   Int
+  changes    Json?
+  timestamp  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+enum LogAction {
+  create
+  update
+  delete
+  publish
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     String
+  type      SettingType @default(string)
+  updatedById Int
+  updatedBy User     @relation(fields: [updatedById], references: [id])
+  updatedAt DateTime @updatedAt
+}
+
+enum SettingType {
+  string
+  text
+  number
+  boolean
+}
