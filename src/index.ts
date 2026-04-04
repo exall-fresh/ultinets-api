@@ -5,8 +5,6 @@ import dotenv from "dotenv";
 import path from "path";
 import { Server as SocketIOServer } from "socket.io";
 import authRoutes from "./routes/auth";
-import pagesPublicRoutes from "./routes/pages.public";
-import pagesAdminRoutes from "./routes/pages.admin";
 import servicesPublicRoutes from "./routes/services.public";
 import servicesAdminRoutes from "./routes/services.admin";
 import teamPublicRoutes from "./routes/team.public";
@@ -40,8 +38,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(process.cwd(), process.env.UPLOAD_DIR || "public/uploads")));
 
 app.use("/api/auth", authRoutes);
-app.use("/api/pages", pagesPublicRoutes);
-app.use("/api/admin/pages", pagesAdminRoutes);
 app.use("/api/services", servicesPublicRoutes);
 app.use("/api/admin/services", servicesAdminRoutes);
 app.use("/api/team", teamPublicRoutes);

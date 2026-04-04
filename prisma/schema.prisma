@@ -15,8 +15,6 @@ model User {
   lastName       String
   role           Role      @default(viewer)
   status         Status    @default(active)
-  pagesCreated   Page[]    @relation("PageCreatedBy")
-  pagesUpdated   Page[]    @relation("PageUpdatedBy")
   servicesCreated Service[] @relation("ServiceCreatedBy")
   servicesUpdated Service[] @relation("ServiceUpdatedBy")
   teamCreated    TeamMember[] @relation("TeamCreatedBy")
@@ -39,24 +37,6 @@ enum Role {
 enum Status {
   active
   inactive
-}
-
-model Page {
-  id             Int      @id @default(autoincrement())
-  slug           String   @unique
-  title          String
-  description    String?
-  content        String?
-  metaTitle      String?
-  metaDescription String?
-  published      Boolean  @default(false)
-  publishedAt    DateTime?
-  createdById    Int
-  updatedById    Int
-  createdBy      User     @relation("PageCreatedBy", fields: [createdById], references: [id])
-  updatedBy      User     @relation("PageUpdatedBy", fields: [updatedById], references: [id])
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
 }
 
 model Service {

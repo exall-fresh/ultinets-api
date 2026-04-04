@@ -38,52 +38,6 @@ async function main() {
   });
   console.log('✅ Created editor user: editor@ultinets.com / editor123');
 
-  // Create sample pages
-  const homePage = await prisma.page.upsert({
-    where: { slug: 'home' },
-    update: {},
-    create: {
-      slug: 'home',
-      title: 'Welcome to Ultinets',
-      description: 'Your trusted technology partner',
-      content: `
-        <h1>Welcome to Ultinets</h1>
-        <p>We provide cutting-edge technology solutions for businesses of all sizes.</p>
-        <h2>Our Services</h2>
-        <p>From web development to cloud infrastructure, we have you covered.</p>
-      `,
-      metaTitle: 'Ultinets - Technology Solutions',
-      metaDescription: 'Ultinets provides innovative technology solutions for modern businesses.',
-      published: true,
-      publishedAt: new Date(),
-      createdById: admin.id,
-      updatedById: admin.id,
-    },
-  });
-  console.log('✅ Created home page');
-
-  const aboutPage = await prisma.page.upsert({
-    where: { slug: 'about' },
-    update: {},
-    create: {
-      slug: 'about',
-      title: 'About Us',
-      description: 'Learn more about Ultinets',
-      content: `
-        <h1>About Ultinets</h1>
-        <p>Founded in 2020, Ultinets has been at the forefront of technology innovation.</p>
-        <p>Our mission is to empower businesses with cutting-edge digital solutions.</p>
-      `,
-      metaTitle: 'About Us | Ultinets',
-      metaDescription: 'Learn about Ultinets mission, vision, and our dedicated team.',
-      published: true,
-      publishedAt: new Date(),
-      createdById: admin.id,
-      updatedById: admin.id,
-    },
-  });
-  console.log('✅ Created about page');
-
   // Create sample services
   const webDevService = await prisma.service.upsert({
     where: { slug: 'web-development' },

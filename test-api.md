@@ -3,14 +3,17 @@
 ## 1. Test Public Endpoints (No Auth Required)
 
 ```bash
-# Get all published pages
-curl http://localhost:4000/api/pages
-
-# Get specific page
-curl http://localhost:4000/api/pages/home
-
-# Get all services
+# Get all published services
 curl http://localhost:4000/api/services
+
+# Get specific service
+curl http://localhost:4000/api/services/web-development
+
+# Get all team members
+curl http://localhost:4000/api/team
+
+# Get all partners
+curl http://localhost:4000/api/partners
 
 # Get site settings
 curl http://localhost:4000/api/settings
@@ -57,21 +60,9 @@ Save the `accessToken` for admin requests.
 Replace `YOUR_TOKEN` with the accessToken from login:
 
 ```bash
-# Get all pages (admin)
-curl http://localhost:4000/api/admin/pages \
+# Get all services (admin)
+curl http://localhost:4000/api/admin/services \
   -H "Authorization: Bearer YOUR_TOKEN"
-
-# Create a new page
-curl -X POST http://localhost:4000/api/admin/pages \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "slug": "new-page",
-    "title": "New Page",
-    "description": "A new page",
-    "content": "<p>Content here</p>",
-    "published": true
-  }'
 
 # Create a service
 curl -X POST http://localhost:4000/api/admin/services \

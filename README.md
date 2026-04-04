@@ -6,7 +6,7 @@ A complete Express.js API for the Ultinets Content Management System (CMS) with 
 
 - **Authentication**: JWT-based auth with access tokens (15min) and refresh tokens (7 days)
 - **Role-Based Access Control (RBAC)**: Admin, Editor, and Viewer roles
-- **Complete CRUD Operations**: Pages, Services, Team Members, Partners
+- **Data Management**: Services, Team Members, Partners
 - **Contact Form**: Public submissions with admin management
 - **Media Management**: File uploads with multer
 - **Activity Logging**: Track all admin actions
@@ -131,7 +131,7 @@ npx prisma migrate dev --name init
 ```
 
 **What this does:**
-- Creates all tables (users, pages, services, team, partners, etc.)
+- Creates all tables (users, services, team, partners, contacts, media, etc.)
 - Sets up foreign key relationships
 - Creates indexes for performance
 
@@ -150,7 +150,6 @@ npm run db:seed
 **This creates:**
 - Admin user: `admin@ultinets.com` / `admin123`
 - Editor user: `editor@ultinets.com` / `editor123`
-- Sample pages (Home, About)
 - Sample services (Web Development, Cloud Solutions)
 - Sample team members
 - Sample partners
@@ -168,7 +167,7 @@ Opens at `http://localhost:5555` - you can browse and edit data.
 **Or test via API:**
 ```bash
 # Should return empty array [] initially
-curl http://localhost:4000/api/pages
+curl http://localhost:4000/api/services
 ```
 
 ### 4. Start the Server
@@ -260,12 +259,6 @@ POST /api/auth/logout
 
 These endpoints are for the frontend website to fetch content:
 
-#### Pages
-```http
-GET /api/pages              # List all published pages
-GET /api/pages/:slug        # Get single page by slug (e.g., "about", "services")
-```
-
 #### Services
 ```http
 GET /api/services           # List all published services
@@ -308,29 +301,6 @@ GET /api/settings           # Get all site settings as key-value object
 ### Admin API Endpoints (Authentication Required)
 
 All admin endpoints require the `Authorization: Bearer <token>` header.
-
-#### Pages Management
-```http
-GET    /api/admin/pages              # List all pages (published & draft)
-GET    /api/admin/pages/:id          # Get page by ID
-POST   /api/admin/pages              # Create new page
-PUT    /api/admin/pages/:id          # Update page
-DELETE /api/admin/pages/:id          # Delete page (admin only)
-PATCH  /api/admin/pages/:id/publish   # Publish/unpublish page
-```
-
-**Page Create/Update Body:**
-```json
-{
-  "slug": "about-us",
-  "title": "About Us",
-  "description": "Learn more about our company",
-  "content": "<p>Full HTML content here...</p>",
-  "metaTitle": "About Us | Ultinets",
-  "metaDescription": "Learn about Ultinets company",
-  "published": true
-}
-```
 
 #### Services Management
 ```http
@@ -560,12 +530,12 @@ All errors follow this format:
 
 ```javascript
 // Using fetch
-const response = await fetch('http://localhost:4000/api/pages');
-const pages = await response.json();
+const response = await fetch('http://localhost:4000/api/services');
+const services = await response.json();
 
-// Get single page
-const pageResponse = await fetch('http://localhost:4000/api/pages/about');
-const page = await pageResponse.json();
+// Get single service
+const serviceResponse = await fetch('http://localhost:4000/api/services/web-development');
+const service = await serviceResponse.json();
 ```
 
 ### Example: Admin API with Auth
@@ -580,12 +550,12 @@ const loginRes = await fetch('http://localhost:4000/api/auth/login', {
 const { accessToken } = await loginRes.json();
 
 // Use token for admin requests
-const pagesRes = await fetch('http://localhost:4000/api/admin/pages', {
+const servicesRes = await fetch('http://localhost:4000/api/admin/services', {
   headers: {
     'Authorization': `Bearer ${accessToken}`
   }
 });
-const adminPages = await pagesRes.json();
+const adminServices = await servicesRes.json();
 ```
 
 ---
