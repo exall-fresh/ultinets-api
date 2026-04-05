@@ -43,7 +43,7 @@ router.get("/:id", handleAsync(async (req, res) => {
 // Create about section
 router.post("/", handleAsync(async (req, res) => {
   const { section, title, content, published, order, pillars, stats } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
 
   const aboutSection = await prisma.aboutSection.create({
     data: {
@@ -83,7 +83,7 @@ router.post("/", handleAsync(async (req, res) => {
 // Update about section
 router.put("/:id", handleAsync(async (req, res) => {
   const { section, title, content, published, order, pillars, stats } = req.body;
-  const userId = req.user.id;
+  const userId = req.user.userId;
   const sectionId = parseInt(req.params.id);
 
   // Delete existing pillars and stats
