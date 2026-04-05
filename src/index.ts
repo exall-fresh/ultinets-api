@@ -20,6 +20,7 @@ import settingsAdminRoutes from "./routes/settings.admin";
 import aboutPublicRoutes from "./routes/about.public";
 import aboutAdminRoutes from "./routes/about.admin";
 import logsAdminRoutes from "./routes/logs.admin";
+import usersAdminRoutes from "./routes/users.admin";
 import prisma from "./prisma";
 
 dotenv.config();
@@ -54,6 +55,7 @@ app.use("/api/settings", settingsPublicRoutes);
 app.use("/api/about", aboutPublicRoutes);
 app.use("/api/admin/about", aboutAdminRoutes);
 app.use("/api/admin/logs", logsAdminRoutes);
+app.use("/api/admin/users", usersAdminRoutes);
 
 io.on("connection", (socket) => {
   console.log("Socket connected", socket.id);
